@@ -162,10 +162,16 @@ run_swat2012 <- function(project_path, output, parameter = NULL,
 #-------------------------------------------------------------------------------
   # Build folder structure where the model will be executed
   ## Identify the required number of parallel threads to build.
+  
+  #n_thread <- min(max(nrow(parameter$values),1),
+  #                max(n_thread,1),
+  #                max(length(run_index),1),
+  #                detectCores())
+  
+  #Delete detectCores(), allowing to parallelize among nodes in SLURM cluster 
   n_thread <- min(max(nrow(parameter$values),1),
                   max(n_thread,1),
-                  max(length(run_index),1),
-                  detectCores())
+                  max(length(run_index),1))
 
   ## Set the .model_run folder as the run_path
   run_path <- ifelse(is.null(run_path), project_path, run_path)%//%".model_run"
