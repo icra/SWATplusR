@@ -195,7 +195,7 @@ run_swat2012 <- function(project_path, output, parameter = NULL,
   # Initiate foreach loop to run SWAT models
   ## make and register cluster, create table that links the parallel worker
   ## with the created parallel thread folders in '.model_run'
-  cl <- makeCluster(n_thread)
+  cl <- slurmR::makeSlurmCluster(n_thread)
   worker <- tibble(worker_id = parSapply(cl, 1:n_thread,
                    function(x) paste(Sys.info()[['nodename']],
                                      Sys.getpid(), sep = "-")),
