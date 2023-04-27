@@ -208,7 +208,7 @@ run_swatplus <- function(project_path, output, parameter = NULL,
                                                            Sys.getpid(), sep = "-")),
                    thread_id = dir(run_path) %>% .[grepl("thread_",.)])
 
-  registerDoSNOW(cl)
+  doParallel::registerDoParallel(cl)
   #-------------------------------------------------------------------------------
   # Start parallel SWAT model execution with foreach
 
