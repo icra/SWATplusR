@@ -163,10 +163,15 @@ run_swatplus <- function(project_path, output, parameter = NULL,
 #-------------------------------------------------------------------------------
   # Build folder structure where the model will be executed
   ## Identify the required number of parallel threads to build.
+
+  #n_thread <- min(max(nrow(parameter$values),1),
+  #                max(n_thread,1),
+  #                max(length(run_index),1),
+  #                detectCores())
+
   n_thread <- min(max(nrow(parameter$values),1),
                   max(n_thread,1),
-                  max(length(run_index),1),
-                  detectCores())
+                  max(length(run_index),1))
 
   ## Set the .model_run folder as the run_path
   run_path <- ifelse(is.null(run_path), project_path, run_path)%//%".model_run"
@@ -196,7 +201,7 @@ run_swatplus <- function(project_path, output, parameter = NULL,
   # Initiate foreach loop to run SWAT models
   ## make and register cluster, create table that links the parallel worker
   ## with the created parallel thread folders in '.model_run'
-  cl <- makeCluster(n_thread)
+  cl <- slurmR::makeCluster(n_thread)
   worker <- tibble(worker_id = parSapply(cl, 1:n_thread,
                                          function(x) paste(Sys.info()[['nodename']],
                                                            Sys.getpid(), sep = "-")),
@@ -277,7 +282,7 @@ sim_result <- foreach(i_run = 1:n_run,
   }
 
   ## Stop cluster after parallel run
-  stopCluster(cl)
+  slurmR::stopCluster(cl)
 
   ## Show total runs and elapsed time in console if not quiet
   if(!quiet) {
